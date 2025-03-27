@@ -27,7 +27,7 @@ Avtomobil Boshqaruv API — bu avtomobillar bilan bog‘liq ma'lumotlarni, jumla
 
 ### 1️⃣ Repozitoriyani klonlash
 
-git clone https://github.com/your-username/car-management-api.git
+git clone https://github.com/GrandAuto-API/CarMaster-API.git
 cd car-management-api
 
 ```
@@ -44,7 +44,7 @@ Loyiha ildiz katalogida `.env` faylini yarating va quyidagicha sozlang:
 
 ```env
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/car_management
+MONGO_URI=mongodb://localhost:27017/car-CarMaster-API
 JWT_SECRET=your_jwt_secret_key
 ```
 
