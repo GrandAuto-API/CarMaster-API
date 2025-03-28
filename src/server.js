@@ -1,5 +1,5 @@
-const { app } = require('./app')
-const { APP_PORT, connectDB } = require('./config/db')
+import { app } from './app.js'
+import { APP_PORT, connectDB } from './config/db.js'
 
 connectDB()
 	.then(data => console.log(data))
