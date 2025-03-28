@@ -2,7 +2,7 @@
 	"name": "jamoaviy-loyiha",
 	"version": "0.2.0",
 	"main": "index.js",
-	"type": "commonjs",
+	"type": "module",
 	"scripts": {
 		"start": "node src/server.js",
 		"s": "nodemon src/server.js"
