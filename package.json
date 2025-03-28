@@ -8,7 +8,7 @@
 		"s": "nodemon src/server.js"
 	},
 	"keywords": [],
-	"author": "Saidkamol, Sherzodbek, Ulug'bek",
+	"author": "Saidkamol, Sherzodbek",
 	"license": "ISC",
 	"description": "",
 	"dependencies": {
