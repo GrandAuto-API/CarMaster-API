@@ -1,9 +1,9 @@
-const { Router } = require('express')
-const { getAllUsers, register } = require('../controllers/user.controller')
+import { Router } from 'express'
+import { getAllUsers, register } from '../controllers/user.controller.js'
 
 const userRoute = Router()
 
 userRoute.get('/', getAllUsers)
 userRoute.post('/', register)
 
-module.exports = { userRoute }
+export { userRoute }

@@ -1,7 +1,7 @@
-const express = require('express')
-const { router } = require('./routes')
-require('dotenv').config()
-
+import express from 'express'
+import { router } from './routes/index.js'
+import dotenv from 'dotenv'
+dotenv.config()
 const app = express()
 
 app.use(express.json())
@@ -15,4 +15,4 @@ app.all('/*', (req, res) => {
 		.json({ message: `Given ${req.url} with method ${req.method} not found` })
 })
 
-module.exports = { app }
+export { app }

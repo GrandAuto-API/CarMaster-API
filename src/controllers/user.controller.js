@@ -1,7 +1,4 @@
-const { isValidObjectId } = require('mongoose')
-const User = require('../models/user.model')
-const { json } = require('express')
-const { JsonWebTokenError } = require('jsonwebtoken')
+import User from '../models/user.model.js'
 
 const handlerServerError = async (error, res) => {
 	console.error(error)
@@ -50,4 +47,4 @@ const register = async (req, res) => {
 	}
 }
 
-module.exports = { getAllUsers, register }
+export { getAllUsers, register }

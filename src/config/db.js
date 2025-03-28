@@ -1,5 +1,5 @@
-const { config } = require('dotenv')
-const mongoose = require('mongoose')
+import { config } from 'dotenv'
+import mongoose from 'mongoose'
 
 const connectDB = async () => {
 	try {
@@ -14,4 +14,4 @@ const connectDB = async () => {
 config()
 const APP_PORT = parseInt(process.env.PORT, 10) || 5000
 
-module.exports = { connectDB, APP_PORT }
+export { APP_PORT, connectDB }
