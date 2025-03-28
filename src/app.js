@@ -10,7 +10,7 @@ app.use(express.json())
 app.use('/api', router)
 
 app.all('/*', (req, res) => {
-	req
+	res
 		.status(404)
 		.json({ message: `Given ${req.url} with method ${req.method} not found` })
 })

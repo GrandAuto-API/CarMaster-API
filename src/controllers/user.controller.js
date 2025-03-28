@@ -1,21 +1,8 @@
-import User from '../models/user.model.js'
-
-const handlerServerError = async (error, res) => {
-	console.error(error)
-	res.status(500).json({ message: 'Server bilan muammo' })
-}
+import { compare, hash } from 'bcrypt'
+import userModel from '../models/user.model.js'
+import handlerServerError from '../utils/handlerError.js'
 
 // Bu funksiya id'ni olib to'g'ri ekanligin tekshirib qaytarib beradi
-
-// const checkValidObjectId = async (res, id) => {
-// 	if (!isValidObjectId(id)) {
-// 		return res
-// 			.status(400)
-// 			.json({ message: 'Bunday ID yaroqsiz boshqa kiriting' })
-// 	}
-
-// 	return true
-// }
 
 const getAllUsers = async (req, res) => {
 	try {
@@ -27,24 +14,52 @@ const getAllUsers = async (req, res) => {
 }
 
 const register = async (req, res) => {
+	const { name, email, phoneNumber, password } = req.body
+
+	const foundedUser = await userModel.findOne({
+		$or: [{ email }, { phoneNumber }],
+	})
+
+	if (foundedUser) {
+		return res.status(409).send({
+			message: 'User already exists, try another email or phone number',
+		})
+	}
+
+	const passwordHash = await hash(password, 10)
+
+	const user = await userModel.create({
+		email,
+		phoneNumber,
+		name,
+		password: passwordHash,
+	})
+
+	res.status(201).send({
+		message: 'success',
+		data: user,
+	})
+}
+
+const login = async (req, res) => {
 	try {
-		const { name, email, password, role } = req.body
+		const { email, password } = req.body
+		const user = await userModel.findOne({ email })
 
-		const existsUser = await User.findOne({ $or: [{ email }, { password }] })
-
-		if (existsUser) {
-			return res
-				.status(404)
-				.json({ message: 'Bunday emailda foydalanuvchi allaqachon mavjud' })
+		if (!user) {
+			return res.status(404).json({ message: 'User not found' })
 		}
-		res.status(201).json({ message: 'success' })
 
-		const user = new User({ name, email, password, role })
+		const isMatch = await compare(password, user.password)
 
-		await user.save()
+		if (!isMatch) {
+			return res.status(404).json({ message: 'Invalid password' })
+		}
+
+		res.json({ message: 'Muvaffaqiyatli kirildi', data: user })
 	} catch (error) {
 		handlerServerError(error, res)
 	}
 }
 
-export { getAllUsers, register }
+export { getAllUsers, login, register }
