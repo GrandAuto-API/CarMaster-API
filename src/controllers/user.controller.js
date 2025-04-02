@@ -2,8 +2,6 @@ import { compare, hash } from 'bcrypt'
 import userModel from '../models/user.model.js'
 import handlerServerError from '../utils/handlerError.js'
 
-// Bu funksiya id'ni olib to'g'ri ekanligin tekshirib qaytarib beradi
-
 const getAllUsers = async (req, res) => {
 	try {
 		const users = await User.find()
