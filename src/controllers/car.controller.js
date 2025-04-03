@@ -1,20 +1,19 @@
 import Car from '../models/car.model.js'
 import checkValidObjectId from '../utils/checkId.js'
-import handlerServerError from '../utils/handlerError.js'
 
-const getAllCars = async (req, res) => {
+const getAllCars = async (req, res, next) => {
 	try {
 		const cars = await Car.find()
 		res.status(200).json({ message: 'success', data: cars })
 	} catch (error) {
-		handlerServerError(error, res)
+		next(error)
 	}
 }
 
-const getCarById = async (req, res) => {
+const getCarById = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(res, id)
+		checkValidObjectId(id)
 
 		const car = await Car.findById(id)
 
@@ -24,11 +23,11 @@ const getCarById = async (req, res) => {
 
 		res.status(201).json({ message: 'success', data: car })
 	} catch (error) {
-		handlerServerError(error, res)
+		next(error)
 	}
 }
 
-const createCar = async (req, res) => {
+const createCar = async (req, res, next) => {
 	try {
 		const { model, brand, category, year, price, available } = req.body
 
@@ -41,15 +40,15 @@ const createCar = async (req, res) => {
 
 		res.status(200).json({ message: 'success', data: car })
 	} catch (error) {
-		handlerServerError(error, res)
+		next(error)
 	}
 }
 
-const updateCar = async (req, res) => {
+const updateCar = async (req, res, next) => {
 	try {
 		const { id } = req.params
 		const { model, brand, category, year, price, available } = req.body
-		checkValidObjectId(res, id)
+		checkValidObjectId(id)
 		const car = await Car.findByIdAndUpdate(id, {
 			model,
 			brand,
@@ -61,14 +60,14 @@ const updateCar = async (req, res) => {
 
 		res.status(200).json({ message: 'success', data: car })
 	} catch (error) {
-		handlerServerError(error, res)
+		next(error)
 	}
 }
 
-const deleteCar = async (req, res) => {
+const deleteCar = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(res, id)
+		checkValidObjectId(id)
 		const car = await Car.findByIdAndDelete(id)
 
 		if (!car) {
@@ -79,7 +78,7 @@ const deleteCar = async (req, res) => {
 			.status(201)
 			.json({ message: "Car muvaffaqiyatli o'chirildi", data: car })
 	} catch (error) {
-		handlerServerError(error, res)
+		next(error)
 	}
 }
 

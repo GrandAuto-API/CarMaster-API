@@ -1,27 +1,23 @@
 import { compare, hash } from 'bcrypt'
-import userModel from '../models/user.model.js'
-import handlerServerError from '../utils/handlerError.js'
+import { BaseException } from '../exception/BaseException.js'
+import User from '../models/user.model.js'
 
 const getAllUsers = async (req, res) => {
 	try {
 		const users = await User.find()
 		res.json({ message: 'success', data: users })
 	} catch (error) {
-		handlerServerError(error, res)
+		next(error)
 	}
 }
 
 const register = async (req, res) => {
 	const { name, email, phoneNumber, password } = req.body
 
-	const foundedUser = await userModel.findOne({
-		$or: [{ email }, { phoneNumber }],
-	})
+	const foundedUser = await userModel.findOne({ email })
 
 	if (foundedUser) {
-		return res.status(409).send({
-			message: 'User already exists, try another email or phone number',
-		})
+		throw new BaseException('Bunday emailga ega user allaqachon mavjud', 409)
 	}
 
 	const passwordHash = await hash(password, 10)
@@ -39,24 +35,24 @@ const register = async (req, res) => {
 	})
 }
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
 	try {
 		const { email, password } = req.body
-		const user = await userModel.findOne({ email })
+		const user = await User.findOne({ email })
 
 		if (!user) {
-			return res.status(404).json({ message: 'User not found' })
+			throw new BaseException('User not found', 400)
 		}
 
 		const isMatch = await compare(password, user.password)
 
 		if (!isMatch) {
-			return res.status(404).json({ message: 'Invalid password' })
+			throw new BaseException('Invalid password', 404)
 		}
 
 		res.json({ message: 'Muvaffaqiyatli kirildi', data: user })
 	} catch (error) {
-		handlerServerError(error, res)
+		next(error)
 	}
 }
 
