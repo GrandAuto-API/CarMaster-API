@@ -1,10 +1,9 @@
 import { isValidObjectId } from 'mongoose'
+import { BaseException } from '../exception/BaseException.js'
 
-const checkValidObjectId = async (res, id) => {
+const checkValidObjectId = async id => {
 	if (!isValidObjectId(id)) {
-		return res
-			.status(400)
-			.json({ message: 'Bunday ID yaroqsiz boshqa kiriting' })
+		throw new BaseException('Invalid ID', 404)
 	}
 
 	return true

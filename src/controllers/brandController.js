@@ -1,53 +1,60 @@
 import { BaseException } from '../exception/BaseException.js'
 import Brand from '../models/Brand.js'
 import checkValidObjectId from '../utils/checkId.js'
-import { applyFiltersAndSorting } from '../utils/filterAndSort.js'
 
-const getAllBrands = async (req, res) => {
+const getAllBrands = async (req, res, next) => {
 	try {
-		const { filters, sort, page = 1, limit = 10 } = req.query
-
-		let query = Brand.find()
-		query = applyFiltersAndSorting(query, JSON.parse(filters || '{}'), sort)
-
-		const brands = await query.skip((page - 1) * limit).limit(Number(limit))
-		res.json(brands)
+		const brand = await Brand.find()
+		res.status(200).json({ message: 'success', data: brand })
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		next(error)
 	}
 }
 
-const createBrand = async (req, res) => {
+const createBrand = async (req, res, next) => {
 	try {
-		const brand = await Brand.create(req.body)
-		res.status(201).json(brand)
+		const { name } = req.body
+		if (!name) {
+			throw new BaseException('Name uchun malumot kirigin majburiy', 400)
+		}
+		const brand = new Brand({ name })
+		await brand.save()
+
+		res.status(201).json({ message: 'success', data: brand })
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		next(error)
 	}
 }
 
-const updateBrand = async (req, res) => {
-	try {
-		const brand = await Brand.findByIdAndUpdate(req.params.id, req.body, {
-			new: true,
-		})
-		res.json(brand)
-	} catch (error) {
-		res.status(500).json({ error: error.message })
-	}
-}
-
-const deleteBrand = async (req, res) => {
+const updateBrand = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		if (!checkValidObjectId(res, id)) return
+		const { name } = req.body
+		checkValidObjectId(id)
+		const brand = await Brand.findByIdAndUpdate(
+			id,
+			{ name },
+			{
+				new: true,
+			}
+		)
+		res.json({ message: 'success', data: brand })
+	} catch (error) {
+		next(error)
+	}
+}
+
+const deleteBrand = async (req, res, next) => {
+	try {
+		const { id } = req.params
+		checkValidObjectId(id)
 		const deleteBrand = await Brand.findByIdAndDelete(id)
 		if (!deleteBrand) {
 			throw new BaseException('User not found', 400)
 		}
 		res.json({ message: 'Brand deleted successfully', data: deleteBrand })
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		next(error)
 	}
 }
 

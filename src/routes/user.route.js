@@ -7,4 +7,4 @@ userRoute.get('/', getAllUsers)
 userRoute.post('/register', register)
 userRoute.post('/login', login)
 
-export { userRoute }
+export default userRoute
