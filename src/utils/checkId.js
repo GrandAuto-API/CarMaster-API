@@ -1,5 +1,5 @@
 import { isValidObjectId } from 'mongoose'
-import { BaseException } from '../exception/BaseException'
+import { BaseException } from '../exception/BaseException.js'
 
 const checkValidObjectId = async id => {
 	if (!isValidObjectId(id)) {

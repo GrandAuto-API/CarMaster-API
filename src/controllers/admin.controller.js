@@ -1,10 +1,10 @@
 import { BaseException } from '../exception/BaseException.js'
-import { Admin } from '../models/admin.model.js'
-import { checkValidObjectId } from '../utils/checkId.js'
+import Admin from '../models/admin.model.js'
+import checkValidObjectId from '../utils/checkId.js'
 
 export const getAllAdmin = async (req, res, next) => {
 	try {
-		const admin = await Admin.find()
+		const admin = await Admin.find().populate('admin')
 		res.status(200).json({ message: 'success', data: admin })
 	} catch (error) {
 		next(error)
@@ -30,6 +30,7 @@ export const getAdminById = async (req, res, next) => {
 export const createAdmin = async (req, res, next) => {
 	try {
 		const { name, admin, action } = req.body
+		checkValidObjectId(admin)
 		const newAdmin = new Admin({ name, admin, action })
 		await newAdmin.save()
 
@@ -44,6 +45,7 @@ export const updateAdmin = async (req, res, next) => {
 		const { id } = req.params
 		checkValidObjectId(id)
 		const { name, admin, action } = req.body
+		checkValidObjectId(admin)
 		const updateAdmin = await Admin.findByIdAndUpdate(
 			id,
 			{

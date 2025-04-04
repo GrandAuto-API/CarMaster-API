@@ -11,7 +11,7 @@ const getAllBrands = async (req, res, next) => {
 	}
 }
 
-const createBrand = async (req, res) => {
+const createBrand = async (req, res, next) => {
 	try {
 		const { name } = req.body
 		if (!name) {
@@ -22,25 +22,32 @@ const createBrand = async (req, res) => {
 
 		res.status(201).json({ message: 'success', data: brand })
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		next(error)
 	}
 }
 
-const updateBrand = async (req, res) => {
-	try {
-		const brand = await Brand.findByIdAndUpdate(req.params.id, req.body, {
-			new: true,
-		})
-		res.json(brand)
-	} catch (error) {
-		res.status(500).json({ error: error.message })
-	}
-}
-
-const deleteBrand = async (req, res) => {
+const updateBrand = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		if (!checkValidObjectId(res, id)) return
+		const { name } = req.body
+		checkValidObjectId(id)
+		const brand = await Brand.findByIdAndUpdate(
+			id,
+			{ name },
+			{
+				new: true,
+			}
+		)
+		res.json({ message: 'success', data: brand })
+	} catch (error) {
+		next(error)
+	}
+}
+
+const deleteBrand = async (req, res, next) => {
+	try {
+		const { id } = req.params
+		checkValidObjectId(id)
 		const deleteBrand = await Brand.findByIdAndDelete(id)
 		if (!deleteBrand) {
 			throw new BaseException('User not found', 400)

@@ -1,45 +1,73 @@
-import Payment from '../models/Payment.js';
-import { applyFiltersAndSorting } from '../utils/filterAndSort.js';
+import { BaseException } from '../exception/BaseException.js'
+import Payment from '../models/Payment.js'
+import checkValidObjectId from '../utils/checkId.js'
+import { applyFiltersAndSorting } from '../utils/filterAndSort.js'
 
-const getAllPayments = async (req, res) => {
+// Get all payments
+const getAllPayments = async (req, res, next) => {
 	try {
-		const { filters, sort, page = 1, limit = 10 } = req.query;
+		const { filters, sort, page = 1, limit = 10 } = req.query
 
-		let query = Payment.find().populate('order');
-		query = applyFiltersAndSorting(query, JSON.parse(filters || '{}'), sort);
+		let query = Payment.find().populate('order')
+		query = applyFiltersAndSorting(query, JSON.parse(filters || '{}'), sort)
 
-		const payments = await query.skip((page - 1) * limit).limit(Number(limit));
-		res.json(payments);
+		const payments = await query.skip((page - 1) * limit).limit(Number(limit))
+		res.json(payments)
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		next(error)
 	}
-};
+}
 
-const createPayment = async (req, res) => {
+// Create payment
+const createPayment = async (req, res, next) => {
 	try {
-		const payment = await Payment.create(req.body);
-		res.status(201).json(payment);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-};
+		const { order, amount, status, method } = req.body
+		const payment = await Payment.create({ order, amount, status, method })
 
-const updatePayment = async (req, res) => {
+		if (!payment) {
+			throw new BaseException('Payment yaratishda hatolik', 400)
+		}
+		res.status(201).json(payment)
+	} catch (error) {
+		next(error)
+	}
+}
+
+// Update payment
+const updatePayment = async (req, res, next) => {
 	try {
-		const payment = await Payment.findByIdAndUpdate(req.params.id, req.body, { new: true });
-		res.json(payment);
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-};
+		const { id } = req.params
+		checkValidObjectId(id)
 
-const deletePayment = async (req, res) => {
+		const { order, amount, status, method } = req.body
+		const payment = await Payment.findByIdAndUpdate(
+			id,
+			{ order, amount, status, method },
+			{ new: true }
+		)
+
+		res.json(payment)
+	} catch (error) {
+		next(error)
+	}
+}
+
+// Delete payment
+const deletePayment = async (req, res, next) => {
 	try {
-		await Payment.findByIdAndDelete(req.params.id);
-		res.json({ message: 'Payment deleted successfully' });
-	} catch (error) {
-		res.status(500).json({ error: error.message });
-	}
-};
+		const { id } = req.params
+		checkValidObjectId(id)
 
-export { getAllPayments, createPayment, updatePayment, deletePayment };
+		const deletePayment = await Payment.findByIdAndDelete(id)
+
+		if (!deletePayment) {
+			throw new BaseException("Pul otkazish o'chirildi", 404)
+		}
+
+		res.json({ message: 'Payment deleted successfully' })
+	} catch (error) {
+		next(error)
+	}
+}
+
+export { createPayment, deletePayment, getAllPayments, updatePayment }
