@@ -1,7 +1,10 @@
+import { BaseException } from '../exception/BaseException.js'
 import Order from '../models/Order.js'
+import checkValidObjectId from '../utils/checkId.js'
 import { applyFiltersAndSorting } from '../utils/filterAndSort.js'
 
-const getAllOrders = async (req, res) => {
+// Get all orders with pagination and sorting
+const getAllOrders = async (req, res, next) => {
 	try {
 		const { filters, sort, page = 1, limit = 10 } = req.query
 
@@ -9,38 +12,55 @@ const getAllOrders = async (req, res) => {
 		query = applyFiltersAndSorting(query, JSON.parse(filters || '{}'), sort)
 
 		const orders = await query.skip((page - 1) * limit).limit(Number(limit))
-		res.json(orders)
+		res.json({ message: 'success', data: orders })
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		next(error)
 	}
 }
 
-const createOrder = async (req, res) => {
+// Create order
+const createOrder = async (req, res, next) => {
 	try {
-		const order = await Order.create(req.body)
+		const { user, car, status } = req.body
+		const order = await Order.create({ user, car, status })
 		res.status(201).json(order)
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		next(error)
 	}
 }
 
-const updateOrder = async (req, res) => {
+// Update order
+const updateOrder = async (req, res, next) => {
 	try {
-		const order = await Order.findByIdAndUpdate(req.params.id, req.body, {
-			new: true,
-		})
+		const { id } = req.params
+		const { user, car, status } = req.body
+		checkValidObjectId(id)
+
+		const order = await Order.findByIdAndUpdate(
+			id,
+			{ user, car, status },
+			{ new: true }
+		)
 		res.json(order)
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		next(error)
 	}
 }
 
-const deleteOrder = async (req, res) => {
+// Delete order
+const deleteOrder = async (req, res, next) => {
 	try {
-		await Order.findByIdAndDelete(req.params.id)
+		const { id } = req.params
+		checkValidObjectId(id)
+
+		const order = await Order.findByIdAndDelete(id)
+		if (!order) {
+			throw new BaseException('Bunday id lik order mavjud emas', 404)
+		}
+
 		res.json({ message: 'Order deleted successfully' })
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		next(error)
 	}
 }
 

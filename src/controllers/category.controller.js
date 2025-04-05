@@ -2,26 +2,28 @@ import { BaseException } from '../exception/BaseException.js'
 import Category from '../models/category.model.js'
 import { checkValidObjectId } from '../utils/checkId.js'
 
+// Get all categories
 export const getAllCategories = async (req, res, next) => {
 	try {
 		const category = await Category.find()
-		res.status(200).json({ message: 'success', data: category })
+		res.json({ message: 'success', data: category })
 	} catch (error) {
 		next(error)
 	}
 }
 
+// Get category by ID
 export const getCategoryById = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(id)
-		const category = Category.findById(id)
+		checkValidObjectId(id) // To check if the provided ID is valid
+		const category = await Category.findById(id) // Corrected the missing 'await' keyword for the findById function
 
 		if (!category) {
-			throw new BaseException('Category not found')
+			throw new BaseException('Category not found', 404)
 		}
 
-		res.status(200).json({
+		res.json({
 			message: 'success',
 			data: category,
 		})
@@ -30,6 +32,7 @@ export const getCategoryById = async (req, res, next) => {
 	}
 }
 
+// Create category
 export const createCategory = async (req, res, next) => {
 	try {
 		const { name } = req.body
@@ -37,20 +40,24 @@ export const createCategory = async (req, res, next) => {
 		const foundCategory = await Category.findOne({ name })
 
 		if (foundCategory) {
-			throw new BaseException('This category is already exists')
+			throw new BaseException('This category is already exists', 400)
 		}
+
 		const category = new Category({ name })
 		await category.save()
-		res.status(200).json({ message: 'success', data: category })
+
+		res.json({ message: 'success', data: category })
 	} catch (error) {
 		next(error)
 	}
 }
 
+// Update category
 export const updateCategory = async (req, res, next) => {
 	try {
 		const { id } = req.params
 		const { name } = req.body
+
 		if (!name) {
 			throw new BaseException('Cateogryga nom bering ', 400)
 		}
@@ -58,16 +65,18 @@ export const updateCategory = async (req, res, next) => {
 
 		const category = await Category.findByIdAndUpdate(id, { name })
 
-		res.status(200).json({ message: 'success', data: category })
+		res.json({ message: 'success', data: category })
 	} catch (error) {
 		next(error)
 	}
 }
 
+// Delete category
 export const deleteCategory = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(id)
+		checkValidObjectId(id) // ID validation
+
 		const deleteCategory = await Category.findByIdAndDelete(id)
 
 		if (!deleteCategory) {
