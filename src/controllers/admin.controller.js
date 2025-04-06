@@ -2,16 +2,16 @@ import { BaseException } from '../exception/BaseException.js'
 import Admin from '../models/admin.model.js'
 import checkValidObjectId from '../utils/checkId.js'
 
-export const getAllAdmin = async (req, res, next) => {
+const getAllAdmin = async (req, res, next) => {
 	try {
-		const admin = await Admin.find().populate('admin')
+		const admin = await Admin.find().populate('admin').select('-password')
 		res.status(200).json({ message: 'success', data: admin })
 	} catch (error) {
 		next(error)
 	}
 }
 
-export const getAdminById = async (req, res, next) => {
+const getAdminById = async (req, res, next) => {
 	try {
 		const { id } = req.params
 		checkValidObjectId(id)
@@ -27,7 +27,7 @@ export const getAdminById = async (req, res, next) => {
 	}
 }
 
-export const createAdmin = async (req, res, next) => {
+const createAdmin = async (req, res, next) => {
 	try {
 		const { name, admin, action } = req.body
 		checkValidObjectId(admin)
@@ -40,7 +40,7 @@ export const createAdmin = async (req, res, next) => {
 	}
 }
 
-export const updateAdmin = async (req, res, next) => {
+const updateAdmin = async (req, res, next) => {
 	try {
 		const { id } = req.params
 		checkValidObjectId(id)
@@ -69,7 +69,7 @@ export const updateAdmin = async (req, res, next) => {
 	}
 }
 
-export const deleteAdmin = async (req, res, next) => {
+const deleteAdmin = async (req, res, next) => {
 	try {
 		const { id } = req.params
 		checkValidObjectId(id)
@@ -85,4 +85,12 @@ export const deleteAdmin = async (req, res, next) => {
 	} catch (error) {
 		next(error)
 	}
+}
+
+export default {
+	createAdmin,
+	deleteAdmin,
+	getAdminById,
+	getAllAdmin,
+	updateAdmin,
 }

@@ -18,7 +18,7 @@ const orderSchema = new mongoose.Schema(
 			default: 'pending',
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true, versionKey: false }
 )
 
 orderSchema.virtual('id').get(function () {

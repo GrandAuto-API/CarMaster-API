@@ -54,7 +54,7 @@ npm run dev
 
 ````
 
-API `http://localhost:5000` da ishlaydi.
+API `http://localhost:3000` da ishlaydi.
 
 ---
 

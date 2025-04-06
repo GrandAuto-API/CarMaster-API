@@ -2,7 +2,6 @@ import { BaseException } from '../exception/BaseException.js'
 import Car from '../models/car.model.js'
 import checkValidObjectId from '../utils/checkId.js'
 
-// Get all cars
 const getAllCars = async (req, res, next) => {
 	try {
 		const cars = await Car.find()
@@ -12,16 +11,15 @@ const getAllCars = async (req, res, next) => {
 	}
 }
 
-// Get car by ID
 const getCarById = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(id) // To check if the provided ID is valid
+		checkValidObjectId(id)
 
 		const car = await Car.findById(id)
 
 		if (!car) {
-			return res.status(404).json({ message: 'Bunday user mavjud emas' }) // Fixed the message typo ("user" should be "car")
+			throw new BaseException('Bunday car mavjud emas')
 		}
 
 		res.status(201).json({ message: 'success', data: car })
@@ -30,7 +28,7 @@ const getCarById = async (req, res, next) => {
 	}
 }
 
-// Create car
+
 const createCar = async (req, res, next) => {
 	try {
 		const { model, brand, category, year, price, available } = req.body
@@ -48,12 +46,12 @@ const createCar = async (req, res, next) => {
 	}
 }
 
-// Update car
+
 const updateCar = async (req, res, next) => {
 	try {
 		const { id } = req.params
 		const { model, brand, category, year, price, available } = req.body
-		checkValidObjectId(id) // ID validation
+		checkValidObjectId(id) 
 
 		const car = await Car.findByIdAndUpdate(
 			id,
@@ -67,12 +65,11 @@ const updateCar = async (req, res, next) => {
 	}
 }
 
-// Delete car
+ 
 const deleteCar = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(id) // ID validation
-
+		checkValidObjectId(id) 
 		const car = await Car.findByIdAndDelete(id)
 
 		if (!car) {
@@ -87,4 +84,4 @@ const deleteCar = async (req, res, next) => {
 	}
 }
 
-export { createCar, deleteCar, getAllCars, getCarById, updateCar }
+export  default { createCar, deleteCar, getAllCars, getCarById, updateCar }

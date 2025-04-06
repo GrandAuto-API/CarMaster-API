@@ -3,7 +3,6 @@ import Payment from '../models/Payment.js'
 import checkValidObjectId from '../utils/checkId.js'
 import { applyFiltersAndSorting } from '../utils/filterAndSort.js'
 
-// Get all payments
 const getAllPayments = async (req, res, next) => {
 	try {
 		const { filters, sort, page = 1, limit = 10 } = req.query
@@ -18,7 +17,23 @@ const getAllPayments = async (req, res, next) => {
 	}
 }
 
-// Create payment
+const getPaymentById = async (req, res, next) => {
+	try {
+		const { id } = req.params
+		checkValidObjectId(id)
+
+		const payment = await Payment.findById(id)
+
+		if (!payment) {
+			throw new BaseException('Bunday payment mavjud emas')
+		}
+
+		res.status(200).json({ message: 'success', data: payment })
+	} catch (error) {
+		next(error)
+	}
+}
+
 const createPayment = async (req, res, next) => {
 	try {
 		const { order, amount, status, method } = req.body
@@ -33,7 +48,6 @@ const createPayment = async (req, res, next) => {
 	}
 }
 
-// Update payment
 const updatePayment = async (req, res, next) => {
 	try {
 		const { id } = req.params
@@ -52,7 +66,6 @@ const updatePayment = async (req, res, next) => {
 	}
 }
 
-// Delete payment
 const deletePayment = async (req, res, next) => {
 	try {
 		const { id } = req.params
@@ -70,4 +83,10 @@ const deletePayment = async (req, res, next) => {
 	}
 }
 
-export { createPayment, deletePayment, getAllPayments, updatePayment }
+export default {
+	createPayment,
+	deletePayment,
+	getAllPayments,
+	updatePayment,
+	getPaymentById,
+}

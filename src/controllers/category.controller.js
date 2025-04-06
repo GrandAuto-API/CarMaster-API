@@ -1,9 +1,8 @@
 import { BaseException } from '../exception/BaseException.js'
 import Category from '../models/category.model.js'
-import { checkValidObjectId } from '../utils/checkId.js'
+import checkValidObjectId from '../utils/checkId.js'
 
-// Get all categories
-export const getAllCategories = async (req, res, next) => {
+const getAllCategories = async (req, res, next) => {
 	try {
 		const category = await Category.find()
 		res.json({ message: 'success', data: category })
@@ -12,12 +11,11 @@ export const getAllCategories = async (req, res, next) => {
 	}
 }
 
-// Get category by ID
-export const getCategoryById = async (req, res, next) => {
+const getCategoryById = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(id) // To check if the provided ID is valid
-		const category = await Category.findById(id) // Corrected the missing 'await' keyword for the findById function
+		checkValidObjectId(id)
+		const category = await Category.findById(id)
 
 		if (!category) {
 			throw new BaseException('Category not found', 404)
@@ -32,8 +30,7 @@ export const getCategoryById = async (req, res, next) => {
 	}
 }
 
-// Create category
-export const createCategory = async (req, res, next) => {
+const createCategory = async (req, res, next) => {
 	try {
 		const { name } = req.body
 
@@ -52,8 +49,7 @@ export const createCategory = async (req, res, next) => {
 	}
 }
 
-// Update category
-export const updateCategory = async (req, res, next) => {
+const updateCategory = async (req, res, next) => {
 	try {
 		const { id } = req.params
 		const { name } = req.body
@@ -71,11 +67,10 @@ export const updateCategory = async (req, res, next) => {
 	}
 }
 
-// Delete category
-export const deleteCategory = async (req, res, next) => {
+const deleteCategory = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(id) // ID validation
+		checkValidObjectId(id)
 
 		const deleteCategory = await Category.findByIdAndDelete(id)
 
@@ -90,4 +85,12 @@ export const deleteCategory = async (req, res, next) => {
 	} catch (error) {
 		next(error)
 	}
+}
+
+export default {
+	deleteCategory,
+	updateCategory,
+	createCategory,
+	getAllCategories,
+	getCategoryById,
 }

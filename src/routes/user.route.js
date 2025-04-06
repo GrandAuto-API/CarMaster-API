@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { getAllUsers, login, register } from '../controllers/user.controller.js'
-
+import userController from '../controllers/user.controller.js'
 const userRoute = Router()
 
-userRoute.get('/', getAllUsers)
-userRoute.post('/register', register)
-userRoute.post('/login', login)
+userRoute.get('/', userController.getAllUsers)
+userRoute.post('/register', userController.register)
+userRoute.post('/login', userController.login)
+userRoute.patch('/:id', userController.updateUser)
 
 export default userRoute
