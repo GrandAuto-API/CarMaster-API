@@ -10,6 +10,20 @@ const getAllBrands = async (req, res, next) => {
 		next(error)
 	}
 }
+const getBrandById = async (req, res, next) => {
+	try {
+		const { id } = req.params
+		checkValidObjectId(id)
+		const brand = await Brand.findById(id)
+
+		if (!brand) {
+			throw new BaseException('Bunday brand mavjud emas')
+		}
+		res.status(200).json({ message: 'success', data: brand })
+	} catch (error) {
+		next(error)
+	}
+}
 
 const createBrand = async (req, res, next) => {
 	try {
@@ -58,4 +72,10 @@ const deleteBrand = async (req, res, next) => {
 	}
 }
 
-export { createBrand, deleteBrand, getAllBrands, updateBrand }
+export default {
+	createBrand,
+	deleteBrand,
+	getAllBrands,
+	updateBrand,
+	getBrandById,
+}

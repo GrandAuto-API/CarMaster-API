@@ -1,12 +1,12 @@
-import express from 'express';
-import { getAllBrands, createBrand, updateBrand, deleteBrand } from '../controllers/brandController.js';
-import { validateBrand } from '../validators/brandValidator.js'; 
+import express from 'express'
+import brandController from '../controllers/brandController.js'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get('/', getAllBrands);
-router.post('/', validateBrand, createBrand);
-router.put('/:id', validateBrand, updateBrand); 
-router.delete('/:id', deleteBrand);
+router.get('/', brandController.getAllBrands)
+router.post('/', brandController.createBrand)
+router.get('/:id', brandController.getBrandById)
+router.patch('/:id', brandController.updateBrand)
+router.delete('/:id', brandController.deleteBrand)
 
-export default router;
+export default router

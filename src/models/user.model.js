@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema(
 			default: 'user',
 		},
 	},
-	{ timestamps: true, versionKey: false }
+	{ timestamps: true, versionKey: false, collection: 'user' }
 )
 
 export default mongoose.model('User', UserSchema)

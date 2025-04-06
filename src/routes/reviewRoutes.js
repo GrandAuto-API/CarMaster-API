@@ -1,12 +1,11 @@
-import express from 'express';
-import { getAllReviews, createReview, updateReview, deleteReview } from '../controllers/reviewController.js';
-import { validateReview } from '../validators/reviewValidator.js'; // Import the validator
+import express from 'express'
+import reviewController from '../controllers/reviewController.js'
+const reviewRoute = express.Router()
 
-const router = express.Router();
+reviewRoute.get('/', reviewController.getAllReviews)
+reviewRoute.post('/', reviewController.createReview)
+reviewRoute.get('/:id', reviewController.getReviewById)
+reviewRoute.patch('/:id', reviewController.updateReview)
+reviewRoute.delete('/:id', reviewController.deleteReview)
 
-router.get('/', getAllReviews);
-router.post('/', validateReview, createReview); 
-router.put('/:id', validateReview, updateReview); 
-router.delete('/:id', deleteReview);
-
-export default router;
+export default reviewRoute
