@@ -8,11 +8,6 @@ const CarSchema = new mongoose.Schema(
 			ref: 'Brand',
 			required: true,
 		},
-		category: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Category',
-			required: true,
-		},
 		year: { type: Number, required: true },
 		price: { type: Number, required: true },
 		available: { type: Boolean, default: true },

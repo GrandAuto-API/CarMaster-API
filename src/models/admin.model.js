@@ -10,7 +10,7 @@ const AdminSchema = mongoose.Schema(
 		},
 		action: { type: mongoose.SchemaTypes.String, required: true },
 	},
-	{ timestamps: true } // timestamp bo'lgani yaxshi, lekin bu 'timestamp' so'zi kichik yozilishi kerak
+	{ timestamps: true }
 )
 
 export default mongoose.model('Admin', AdminSchema)
