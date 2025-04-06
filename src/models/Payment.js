@@ -2,29 +2,18 @@ import mongoose from 'mongoose'
 
 const paymentSchema = new mongoose.Schema(
 	{
-		order: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Order',
-			required: true,
-		},
-		amount: {
-			type: Number,
-			required: true,
-			min: 0.01, 
-		},
-		status: {
+		url: {
 			type: String,
-			enum: ['pending', 'paid', 'failed'],
-			default: 'pending',
-		},
-		method: {
-			type: String,
-			enum: ['card', 'paypal', 'bank_transfer'],
-			default: 'card',
 			required: true,
+		},
+		type: {
+			type: String,
+			enum: ['image', 'video', 'file'],
+			required: true,
+			default: 'image',
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true, versionKey: false }
 )
 
 paymentSchema.virtual('id').get(function () {
