@@ -8,9 +8,22 @@ const CarSchema = new mongoose.Schema(
 			ref: 'Brand',
 			required: true,
 		},
-		year: { type: Number, required: true },
-		price: { type: Number, required: true },
-		available: { type: Boolean, default: true },
+		year: {
+			type: Number,
+			required: true
+		},
+		price: {
+			type: Number,
+			required: true
+		},
+		imageUrl: {
+			type: mongoose.SchemaTypes.String,
+			required: false,
+		},
+		available: {
+			type: Boolean,
+			default: true
+		},
 	},
 	{ timestamps: true, versionKey: false }
 )
