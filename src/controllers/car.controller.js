@@ -31,9 +31,17 @@ const getCarById = async (req, res, next) => {
 
 const createCar = async (req, res, next) => {
 	try {
-		const { model, brand, category, year, price, available } = req.body
+		const { model, brand, category, year, price, available, imageUrl } = req.body
 
-		const car = new Car({ model, brand, category, year, price, available })
+		const car = new Car({
+			model,
+			brand,
+			category,
+			year,
+			price,
+			available,
+			imageUrl: req.file.filename
+		})
 
 		await car.save()
 		if (!car) {
@@ -50,12 +58,20 @@ const createCar = async (req, res, next) => {
 const updateCar = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		const { model, brand, category, year, price, available } = req.body
-		checkValidObjectId(id) 
+		const { model, brand, category, year, price, available, imageUrl } = req.body
+		checkValidObjectId(id)
 
 		const car = await Car.findByIdAndUpdate(
 			id,
-			{ model, brand, category, year, price, available },
+			{
+				model,
+				brand,
+				category,
+				year,
+				price,
+				available,
+				imageUrl: req.file.filename,
+			},
 			{ new: true }
 		)
 
@@ -65,11 +81,11 @@ const updateCar = async (req, res, next) => {
 	}
 }
 
- 
+
 const deleteCar = async (req, res, next) => {
 	try {
 		const { id } = req.params
-		checkValidObjectId(id) 
+		checkValidObjectId(id)
 		const car = await Car.findByIdAndDelete(id)
 
 		if (!car) {
@@ -84,4 +100,4 @@ const deleteCar = async (req, res, next) => {
 	}
 }
 
-export  default { createCar, deleteCar, getAllCars, getCarById, updateCar }
+export default { createCar, deleteCar, getAllCars, getCarById, updateCar }
