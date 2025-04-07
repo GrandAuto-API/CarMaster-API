@@ -1,7 +1,15 @@
 import { compare, hash } from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import {
+	ACCESS_TOKEN_EXPIRE_TIME,
+	ACCESS_TOKEN_SECRET,
+	REFRESH_TOKEN_EXPIRE_TIME,
+	REFRESH_TOKEN_SECRET,
+} from '../config/jwt.config.js'
 import { BaseException } from '../exception/BaseException.js'
 import User from '../models/user.model.js'
 import checkValidObjectId from '../utils/checkId.js'
+import sendMail from '../utils/mail.utils.js'
 
 const getAllUsers = async (req, res, next) => {
 	try {
@@ -67,6 +75,12 @@ const register = async (req, res, next) => {
 			password: passwordHash,
 		})
 
+		await sendMail({
+			to: email,
+			subject: 'Welcome',
+			text: `Salom ${name}! Bizning salonimizga muvaffaqiyatli royxatdan otdingiz `,
+		})
+
 		res.status(201).send({
 			message: 'success',
 			data: user,
@@ -79,6 +93,7 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
 	try {
 		const { email, password } = req.body
+
 		const user = await User.findOne({ email })
 
 		if (!user) {
@@ -91,10 +106,70 @@ const login = async (req, res, next) => {
 			throw new BaseException('Bunday password mavjud emas', 404)
 		}
 
-		res.json({ message: 'Muvaffaqiyatli kirildi', data: user })
+		const accessToken = jwt.sign(
+			{ id: user.id, role: user.role },
+			ACCESS_TOKEN_SECRET,
+			{ expiresIn: ACCESS_TOKEN_EXPIRE_TIME }
+		)
+
+		const refreshToken = jwt.sign(
+			{ id: user.id, role: user.role },
+			REFRESH_TOKEN_SECRET,
+			{ expiresIn: REFRESH_TOKEN_EXPIRE_TIME }
+		)
+
+		res.cookie('accessToken', accessToken, {
+			maxAge: 60 * 1000,
+			httpOnly: true,
+		})
+
+		res.cookie('refreshToken', refreshToken, {
+			maxAge: 2 * 60 * 1000,
+			httpOnly: true,
+		})
+
+		res.json({
+			message: 'Muvaffaqiyatli kirildi',
+			tokens: {
+				accessToken,
+				refreshToken,
+			},
+			data: user,
+		})
 	} catch (error) {
 		next(error)
 	}
 }
 
-export default { getAllUsers, login, register, updateUser }
+const refresh = async (req, res, next) => {
+	try {
+		const { refreshToken } = req.body
+		const data = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET)
+
+		const accessToken = jwt.sign(data, ACCESS_TOKEN_SECRET, {
+			expiresIn: ACCESS_TOKEN_EXPIRE_TIME,
+		})
+
+		const newRefreshToken = jwt.sign(data, REFRESH_TOKEN_SECRET, {
+			expiresIn: REFRESH_TOKEN_EXPIRE_TIME,
+		})
+
+		res.send({
+			message: 'success',
+			tokens: {
+				accessToken,
+				refreshToken: newRefreshToken,
+			},
+		})
+	} catch (error) {
+		if (error instanceof jwt.TokenExpiredError) {
+			next(new BaseException('Refresh token expired', 401))
+		} else if (error instanceof jwt.JsonWebTokenError) {
+			next(new BaseException('Invalid refresh token', 400))
+		} else {
+			next(error)
+		}
+	}
+}
+
+export default { refresh, getAllUsers, login, register, updateUser }
