@@ -9,16 +9,7 @@ import {
 import { BaseException } from '../exception/BaseException.js'
 import User from '../models/user.model.js'
 import checkValidObjectId from '../utils/checkId.js'
-import sendMail from '../utils/mail.utils.js'
-
-const getAllUsers = async (req, res, next) => {
-	try {
-		const users = await User.find()
-		res.json({ message: 'success', data: users })
-	} catch (error) {
-		next(error)
-	}
-}
+import { sendMail } from '../utils/mail.utils.js'
 
 const updateUser = async (req, res, next) => {
 	try {
@@ -69,11 +60,7 @@ const register = async (req, res, next) => {
 
 		const passwordHash = await hash(password, 10)
 
-		const user = await User.create({
-			email,
-			name,
-			password: passwordHash,
-		})
+		const newUser = new User({ name, email, password: passwordHash })
 
 		await sendMail({
 			to: email,
@@ -81,10 +68,9 @@ const register = async (req, res, next) => {
 			text: `Salom ${name}! Bizning salonimizga muvaffaqiyatli royxatdan otdingiz `,
 		})
 
-		res.status(201).send({
-			message: 'success',
-			data: user,
-		})
+		await newUser.save()
+
+		return res.redirect('/')
 	} catch (error) {
 		next(error)
 	}
@@ -119,23 +105,42 @@ const login = async (req, res, next) => {
 		)
 
 		res.cookie('accessToken', accessToken, {
-			maxAge: 60 * 1000,
+			maxAge: 60 * 60 * 1000,
 			httpOnly: true,
 		})
 
 		res.cookie('refreshToken', refreshToken, {
-			maxAge: 2 * 60 * 1000,
+			maxAge: 7 * 24 * 60 * 60 * 1000,
 			httpOnly: true,
 		})
 
-		res.json({
-			message: 'Muvaffaqiyatli kirildi',
-			tokens: {
-				accessToken,
-				refreshToken,
-			},
-			data: user,
-		})
+		return res.redirect('/')
+	} catch (error) {
+		next(error)
+	}
+}
+
+const forgotPassword = async (req, res, next) => {
+	try {
+		const { email } = req.body
+
+		const user = await User.findOne({ email })
+
+		if (!user) {
+			return res.render('forgot-password', {
+				error: 'User not found',
+				message: null, 
+			})
+		}
+	} catch (error) {
+		next(error)
+	}
+}
+
+const getAllUsers = async (req, res, next) => {
+	try {
+		const users = await User.find().select('-password')
+		res.json({ message: 'success', data: users })
 	} catch (error) {
 		next(error)
 	}

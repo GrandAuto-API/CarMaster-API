@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Car loyiha</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+		}
+
+		header {
+			background-color: #1a1a1a;
+			padding: 20px 40px;
+		}
+
+		nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.nav-links {
+			list-style: none;
+			display: flex;
+			gap: 30px;
+		}
+
+		.nav-links li {
+			display: inline;
+		}
+
+		.nav-links a {
+			text-decoration: none;
+			color: white;
+			font-size: 18px;
+			transition: color 0.3s ease;
+		}
+
+		.nav-links a:hover {
+			color: #00ccff;
+		}
+
+		.logo {
+			color: white;
+			font-size: 24px;
+			font-weight: bold;
+		}
+
+		@media (max-width: 768px) {
+			nav {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.nav-links {
+				flex-direction: column;
+				gap: 15px;
+				margin-top: 10px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<nav>
+			<div class="logo">CarLoyiha</div>
+			<ul class="nav-links">
+				<li><a href="#">Home</a></li>
+				<li><a href="#">Models</a></li>
+				<li><a href="#">About</a></li>
+				<li><a href="#">Contact</a></li>
+			</ul>
+		</nav>
+	</header>
+</body>
+
+</html>
