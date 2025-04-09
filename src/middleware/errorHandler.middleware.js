@@ -1,7 +1,11 @@
-export const errorHandlerMiddleware = (err, req, res, next) => {
+export const ErrorHandlerMiddleware = (err, _, res, __) => {
 	if (err.isException) {
-		return res.status(err.status).send({ message: err.message })
+		return res.status(err.status).send({
+			message: err.message,
+		})
 	}
 	console.log(err)
-	res.status(500).send({ message: 'Internal Server Error' })
+	res.status(500).send({
+		message: 'Internal Server Error',
+	})
 }
