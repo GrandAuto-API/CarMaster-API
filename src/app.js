@@ -16,14 +16,24 @@ config()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+
 // Statik fayllar uchun to'g'ri yo'lni ko'rsatish
 app.use(express.static(path.join(__dirname, 'public')))
+
+
+app.set('view engine', 'ejs')
+app.set('views', path.join(process.cwd(), 'src', 'views')) // Endi bu ishlaydi
+
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(process.cwd(), 'src', 'views')) // views papkasini sozlash
 
 app.use('/', pageRoute)
 app.use('/', router)
+
+app.use("/uploads", express.static(join(process.cwd(), "uploads")));
+
+app.use('/api', router)
 
 app.all('/*', (req, res, next) => {
 	res.render('404') // 404 sahifasi
