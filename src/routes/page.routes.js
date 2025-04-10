@@ -1,9 +1,15 @@
 import { Router } from 'express'
+import carModel from '../models/car.model.js'
 
 const pageRouter = Router()
 
-pageRouter.get('/', (req, res) => {
-	res.render('menu')
+pageRouter.get('/',async (req, res) => {
+  const cars = await carModel.find();
+	res.render('menu',{cars})
+})
+
+pageRouter.get('/car-info',(req,res)=>{
+	res.render('cadilakt')
 })
 
 pageRouter.get('/auth/login', (req, res) => {
