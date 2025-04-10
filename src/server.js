@@ -10,3 +10,14 @@ connectDB()
 app.listen(APP_PORT, () => {
 	console.log(`Server ${APP_PORT} da ishlamoqda`)
 })
+
+process.on('unhandledRejection', (reason, promise) => {
+	server.closeAllConnections()
+	server.close(() => {
+		process.exit(1)
+	})
+})
+
+process.on('uncaughtException', err => {
+	process.exit(1)
+})
