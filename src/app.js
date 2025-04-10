@@ -22,15 +22,28 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
+
 app.use('/image', express.static(path.join(__dirname, 'src', 'images')))
 
+
+// Statik fayllar uchun to'g'ri yo'lni ko'rsatish
+
 app.use(express.static(path.join(__dirname, 'public')))
+
+
+app.set('view engine', 'ejs')
+app.set('views', path.join(process.cwd(), 'src', 'views')) // Endi bu ishlaydi
+
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(process.cwd(), 'src', 'views'))
 
 app.use('/', pageRoute)
 app.use('/', router)
+
+app.use("/uploads", express.static(join(process.cwd(), "uploads")));
+
+app.use('/api', router)
 
 app.all('/*', (req, res, next) => {
 	res.render('404')
