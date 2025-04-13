@@ -12,6 +12,10 @@ pageRouter.get('/car-info',(req,res)=>{
 	res.render('cadilakt')
 })
 
+pageRouter.get('/car_malibu',(req,res)=>{
+	res.render('malibu')
+})
+
 pageRouter.get('/auth/login', (req, res) => {
 	res.render('login', { error: null })
 })

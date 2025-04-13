@@ -129,7 +129,7 @@ const forgotPassword = async (req, res, next) => {
 		if (!user) {
 			return res.render('forgot-password', {
 				error: 'User not found',
-				message: null, 
+				message: null,
 			})
 		}
 	} catch (error) {
@@ -177,4 +177,11 @@ const refresh = async (req, res, next) => {
 	}
 }
 
-export default { refresh, getAllUsers, login, register, updateUser }
+export default {
+	refresh,
+	getAllUsers,
+	login,
+	register,
+	updateUser,
+	forgotPassword,
+}
